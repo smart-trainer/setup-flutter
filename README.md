@@ -1,0 +1,41 @@
+# Github Action: setup-flutter
+
+This repository was originally forked from [subosito/flutter-action](https://github.com/subosito/flutter-action.git)
+
+This action sets up a flutter environment on `macOS` for use in Github actions. 
+
+# Usage
+
+```yaml
+jobs:
+  build:
+    name: Build iOS and Android Flutter app
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java 
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11.x'
+
+      - name: Setup Flutter
+        uses: smart-trainer/setup-flutter@v1
+        with:
+          flutter-version: '1.22.5'
+          channel: 'stable' # 'beta' or 'dev' (optional, default to: 'stable')
+
+      - name: Install dependencies 
+        run: flutter pub get
+
+      - name: Test
+        run: flutter test
+
+      - name: Build Android 
+        run: flutter build apk # or flutter build appbundle
+
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+```

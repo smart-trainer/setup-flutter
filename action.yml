@@ -1,0 +1,16 @@
+name: 'Setup Flutter action'
+description: 'Setup a Flutter environment on macOS'
+inputs:
+  flutter-version:
+    description: 'The Flutter version to install'
+    required: false
+  channel:
+    description: 'The Flutter build release channel'
+    required: false
+    default: 'stable'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'maximize'
+  color: 'blue'
