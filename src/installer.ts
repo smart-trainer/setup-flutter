@@ -5,9 +5,9 @@ import * as exec from '@actions/exec';
 import * as tc from '@actions/tool-cache';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as release from './release';
 
-export const storageUrl = 'https://storage.googleapis.com/flutter_infra/releases';
+export const storageUrl =
+  'https://storage.googleapis.com/flutter_infra/releases';
 
 interface IFlutterData {
   channel: string;
@@ -34,17 +34,21 @@ interface IFlutterReleaseJson {
   releases: IFlutterRelease[];
 }
 
-
-export async function getFlutter(version: string, channel: string): Promise<void> {
+export async function getFlutter(
+  version: string,
+  channel: string
+): Promise<void> {
   const releasesUrl: string = `${storageUrl}/releases_macos.json`;
   const http: httpm.HttpClient = new httpm.HttpClient('flutter-action');
-  const json: IFlutterReleaseJson | null = (await http.getJson<IFlutterReleaseJson | null>(releasesUrl)).result;
+  const json: IFlutterReleaseJson | null = (
+    await http.getJson<IFlutterReleaseJson | null>(releasesUrl)
+  ).result;
 
   if (!json) {
     throw new Error('Failed to get flutter releases_macos.json');
   }
 
-  let flutterData
+  let flutterData;
   if (version === '') {
     flutterData = await getLatestVersion(json, channel);
   } else {
@@ -55,11 +59,17 @@ export async function getFlutter(version: string, channel: string): Promise<void
   if (toolPath) {
     core.debug(`Tool found in cache ${toolPath}`);
   } else {
-    core.debug(`Downloading Flutter from Google storage ${flutterData.downloadUrl}`);
+    core.debug(
+      `Downloading Flutter from Google storage ${flutterData.downloadUrl}`
+    );
 
     const sdkFile = await tc.downloadTool(flutterData.downloadUrl);
     const sdkCache = await tmpDir();
-    const sdkDir = await extract(sdkFile, sdkCache, path.basename(flutterData.downloadUrl));
+    const sdkDir = await extract(
+      sdkFile,
+      sdkCache,
+      path.basename(flutterData.downloadUrl)
+    );
 
     toolPath = await tc.cacheDir(sdkDir, 'flutter', flutterData.version);
   }
@@ -70,16 +80,24 @@ export async function getFlutter(version: string, channel: string): Promise<void
 }
 
 async function tmpDir(): Promise<string> {
-
   const runnerTmp = process.env['RUNNER_TEMP'] || '';
-  const baseDir = runnerTmp ? runnerTmp : path.join('/Users', 'actions', 'temp');
-  const tempDir = path.join(baseDir, 'temp_' + Math.floor(Math.random() * 2000000000));
+  const baseDir = runnerTmp
+    ? runnerTmp
+    : path.join('/Users', 'actions', 'temp');
+  const tempDir = path.join(
+    baseDir,
+    'temp_' + Math.floor(Math.random() * 2000000000)
+  );
 
   await io.mkdirP(tempDir);
   return tempDir;
 }
 
-async function extract(sdkFile: string, sdkCache: string, originalFilename: string): Promise<string> {
+async function extract(
+  sdkFile: string,
+  sdkCache: string,
+  originalFilename: string
+): Promise<string> {
   const fileStats = fs.statSync(path.normalize(sdkFile));
 
   if (fileStats.isFile()) {
@@ -103,29 +121,40 @@ async function extract(sdkFile: string, sdkCache: string, originalFilename: stri
   }
 }
 
-async function getLatestVersion(storage: IFlutterReleaseJson, channel: string): Promise<IFlutterData> {
+async function getLatestVersion(
+  storage: IFlutterReleaseJson,
+  channel: string
+): Promise<IFlutterData> {
   const release = storage.releases.find(release => {
-    return (release.hash === storage.current_release[channel] && release.channel === channel)
+    return (
+      release.hash === storage.current_release[channel] &&
+      release.channel === channel
+    );
   });
 
   return getVersionData(release);
 }
 
-async function getVersion(storage: IFlutterReleaseJson, channel: string, version: string): Promise<IFlutterData> {
+async function getVersion(
+  storage: IFlutterReleaseJson,
+  channel: string,
+  version: string
+): Promise<IFlutterData> {
   const release = storage.releases.find(release => {
-    return (release.version === version && release.channel === channel)
+    return release.version === version && release.channel === channel;
   });
 
   return getVersionData(release);
 }
 
 function getVersionData(release: IFlutterRelease | undefined) {
-
   if (!release) {
     throw new Error(`Unable get flutter version`);
   }
 
-  core.debug(`latest version from channel ${release.channel} is ${release.version}`);
+  core.debug(
+    `latest version from channel ${release.channel} is ${release.version}`
+  );
 
   const flutterData: IFlutterData = {
     channel: release.channel,
