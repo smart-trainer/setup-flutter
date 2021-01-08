@@ -1,6 +1,6 @@
 {
   "name": "setup-flutter",
-  "version": "1.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Setup Flutter environment for use in Github actions",
   "main": "lib/index.js",
