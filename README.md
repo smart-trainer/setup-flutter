@@ -4,6 +4,15 @@ This repository was originally forked from [subosito/flutter-action](https://git
 
 This action sets up a flutter environment on `macOS` for use in Github actions. 
 
+If you update the code base remember to tag the latest commit using 
+
+```
+git add . 
+git commit -m "any commit message"
+git tag -a -m "any commit message" v1
+git push
+```
+
 # Usage
 
 ```yaml
