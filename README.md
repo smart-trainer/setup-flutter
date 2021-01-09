@@ -10,10 +10,20 @@ If you update the code base remember to tag the latest commit using
 git add . 
 git commit -m "any commit message"
 git tag -a -m "any commit message" v1
-git push
+git push --follow-tags
 ```
 
 # Usage
+
+## Inputs
+
+- `flutter-version`: set specific version
+  - go to [flutter.dev](https://flutter.dev/docs/development/tools/sdk/releases) and copy the version you need
+  - defaults to latest version
+- `channel`: set specific channel 
+  - defaults to stable 
+
+## Example 
 
 ```yaml
 jobs:

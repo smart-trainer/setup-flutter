@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
+import * as http from '@actions/http-client';
 import * as io from '@actions/io';
-import * as httpm from '@actions/http-client';
-import * as exec from '@actions/exec';
 import * as tc from '@actions/tool-cache';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -39,9 +38,9 @@ export async function getFlutter(
   channel: string
 ): Promise<void> {
   const releasesUrl: string = `${storageUrl}/releases_macos.json`;
-  const http: httpm.HttpClient = new httpm.HttpClient('flutter-action');
+  const httpClient: http.HttpClient = new http.HttpClient('flutter-action');
   const json: IFlutterReleaseJson | null = (
-    await http.getJson<IFlutterReleaseJson | null>(releasesUrl)
+    await httpClient.getJson<IFlutterReleaseJson | null>(releasesUrl)
   ).result;
 
   if (!json) {
